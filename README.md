@@ -200,6 +200,9 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 6.  Após a criação, selecione o VPG e clique em **"Actions > Attach to VPC"**.
 7.  Selecione sua VPC (`vpc-aws`) e clique em **"Attach"**.
 
+![Virtual Private Gateway (VPG)](MultiCloud/4aws%20-%20vpg.png)
+![Virtual Private Gateway (VPG)](MultiCloud/4aws%20-%20vpg2.png)
+![Virtual Private Gateway (VPG)](MultiCloud/4aws%20-%20vpg3.png)
 
 ## 3.2.6   [Criação da Conexão VPN (Site-to-Site)]
 
