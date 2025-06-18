@@ -2,30 +2,18 @@
 
 Este documento descreve a criação de um ambiente multi-cloud entre Microsoft Azure e Amazon Web Services (AWS), com comunicação privada via VPN Site-to-Site. O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuniquem entre si apenas por IPs privados.
 
-Sumário:
- Visão Geral da Arquitetura
- Arquitetura da Solução
- Provisionamento das Máquinas Virtuais
-  Configuração no AWS
-    Criação da VPC
-    Criação da Subnet
-    Criação do Customer Gateway
-    Criação do Virtual Private Gateway (VPG)
-    Criação da Conexão VPN (Site-to-Site)
-   Configuração no Azure
-     Criação do Grupo de Recursos
-     Criação da Virtual Network (VNet)
-     Criação da Subnet para o Gateway
-     Criação do Gateway de Rede Virtual (VPN Gateway)
-     Criação do Gateway de Rede Local
-     Criação da Conexão
- Configuração da VPN Site-to-Site
- Configuração de Rede e Segurança
- Testes de Conectividade
- Tabelas de Configuração
- Resolução de Problemas Comuns
- Considerações Finais
- Referências
+## Sumário
+
+- [1. Visão Geral da Arquitetura](#1-visão-geral-da-arquitetura)
+- [2. Arquitetura da Solução](#2-arquitetura-da-solução)
+- [3. Provisionamento das Máquinas Virtuais](#3-provisionamento-das-máquinas-virtuais)
+- [4. Configuração da VPN Site-to-Site](#4-configuração-da-vpn-site-to-site)
+- [5. Configuração de Rede e Segurança](#5-configuração-de-rede-e-segurança)
+- [6. Testes de Conectividade](#6-testes-de-conectividade)
+- [7. Tabelas de Configuração](#7-tabelas-de-configuração)
+- [8. Resolução de Problemas Comuns](#8-resolução-de-problemas-comuns)
+- [9. Considerações Finais](#9-considerações-finais)
+- [10. Referências](#10-referências)
 
 
 ## 1. Visão Geral da Arquitetura
@@ -62,7 +50,7 @@ Um grupo de recursos é um contêiner lógico para os recursos do Azure.
 4.  Selecione a **"Região"** (ex: `(US) West US 2`).
 5.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-
+![1az - Grupo de Recursos](MultiCloud/1az - Grupo de Recursos.png)
 
 ## 3.1.3  [Criação da Virtual Network (VNet)]
 
