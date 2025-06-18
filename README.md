@@ -1,6 +1,7 @@
 # Integração Multi-Cloud: Azure e AWS (VPN Site-to-Site)
 
-Este documento descreve a criação de um ambiente multi-cloud entre Microsoft Azure e Amazon Web Services (AWS), com comunicação privada via VPN Site-to-Site. O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuniquem entre si apenas por IPs privados.
+Este documento descreve a criação de um ambiente multi-cloud entre Microsoft Azure e Amazon Web Services (AWS), com comunicação privada via VPN Site-to-Site. 
+O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuniquem entre si apenas por IPs privados.
 
 ## Sumário
 
@@ -18,8 +19,9 @@ Este documento descreve a criação de um ambiente multi-cloud entre Microsoft A
 
 ## 1. Visão Geral da Arquitetura
 
-A integração será estabelecida através de uma VPN Site-to-Site. A AWS VPC terá um bloco CIDR "172.16.0.0/16" e a Azure VNet terá "10.0.0.0/16". Cada nuvem configura um Gateway VPN que se conecta ao outro, permitindo que as sub-redes em ambas as extremidades se comuniquem.
-
+A integração será estabelecida através de uma VPN Site-to-Site. 
+A AWS VPC terá um bloco CIDR "172.16.0.0/16" e a Azure VNet terá "10.0.0.0/16". 
+Cada nuvem configura um Gateway VPN que se conecta ao outro, permitindo que as sub-redes em ambas as extremidades se comuniquem.
 
 ## 2. Arquitetura da Solução
 
@@ -29,16 +31,16 @@ A integração será estabelecida através de uma VPN Site-to-Site. A AWS VPC te
 
 ## 3. Provisionamento das Máquinas Virtuais
 
-## 3.1 Azure
+## 3.1 - Azure
 
-Azure Serviço: Ubuntu
-Rede Virtual (VNet): vnet-azure
-Sub-rede: subnet-azure-private
-IP Privado: 10.0.1.4
-Região: West us 2
-Grupo de Recursos: gr-multicloud
+Azure Serviço: Ubuntu <br>
+Rede Virtual (VNet): vnet-azure <br>
+Sub-rede: subnet-azure-private <br>
+IP Privado: 10.0.1.4 <br>
+Região: West us 2 <br>
+Grupo de Recursos: gr-multicloud <br>
 
-## 3.1.1 Configurações na Azure
+## 3.1.1 [Configurações na Azure]
 
 ## 3.1.2  [Criação do Grupo de Recursos]
 
@@ -50,7 +52,7 @@ Um grupo de recursos é um contêiner lógico para os recursos do Azure.
 4.  Selecione a **"Região"** (ex: `(US) West US 2`).
 5.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-![1az - Grupo de Recursos](MultiCloud/1az - Grupo de Recursos.png)
+![Grupo de Recursos](MultiCloud/1az%20-%20Grupo%20de%20Recursos.png)
 
 ## 3.1.3  [Criação da Virtual Network (VNet)]
 
@@ -136,15 +138,15 @@ Finalmente, crie a conexão entre o Gateway de Rede Virtual do Azure e o Gateway
 
 ## 3.2 AWS
 
-AWS Serviço: EC2 (Amazon Linux)
-VPC: vpc-aws
-Sub-rede: subnet-aws-private
-IP Privado: 10.0.2.4
-Região: us-east-1
+AWS Serviço: EC2 (Amazon Linux) <br>
+VPC: vpc-aws <br>
+Sub-rede: subnet-aws-private <br>
+IP Privado: 10.0.2.4 <br>
+Região: us-east-1 <br>
 
 ## 3.2.1 - Configurações na AWS
 
-## 3.2.2   [Criação da VPC]
+## 3.2.2  [Criação da VPC]
 
 Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recursos na AWS.
 
@@ -157,7 +159,7 @@ Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recurs
 7.  Clique em **"Create VPC"**.
 
 
-## 3.2.3   [Criação da Subnet]
+## 3.2.3  [Criação da Subnet]
 
 Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
@@ -259,30 +261,37 @@ Após a conclusão das configurações em ambas as nuvens:
 
 SSH da EC2 → VM da Azure:
 
-ssh ubuntu@172.16.2.4
+	ssh ubuntu@172.16.2.4
 
 Ping da EC2 → VM da Azure:
 
-ping 10.1.1.4
+	* ping 10.1.1.4
 
-    * Da VM do Azure, tente dar `ping` para o IP privado da instância EC2.
+* Da VM do Azure, tente dar `ping` para o IP privado da instância EC2.
 
 SSH da VM da Azure → EC2:
 
-ssh ec2-user@10.2.1.4
+	ssh ec2-user@10.2.1.4
 
 Ping da VM da Azure → EC2:
 
-ping 172.16.2.4
+	ping 172.16.2.4
 
-	*Verificar rotas com ip route ou traceroute:
+Verificar rotas com ip route ou traceroute:
 
-traceroute 10.2.1.4
-traceroute 172.16.2.4
+	traceroute 10.2.1.4
+	traceroute 172.16.2.4
 
 Se a VPN estiver ativa e os firewalls corretamente configurados, a comunicação será bem-sucedida sem uso de IPs públicos.
 
-## 7. Tabelas de Configuração Tabela de IPs e Sub-redes Recurso IP Privado Sub-rede CIDR Região VM Azure 10.1.1.4 10.1.1.0/24 Brazil South EC2 AWS 10.2.1.4 10.2.1.0/24 us-east-1 Gateway Azure Dinâmico - Brazil South Gateway AWS Dinâmico - us-east-1 (Fazer TABELA)
+## 7. Tabelas de Configuração 
+
+ | Recurso | IP Privado | Sub-rede | CIDR | Região | 
+|---------------|----------------|---------------|---------|------------|
+|VM Azure|10.0.1.4|subnet-azure|10.0.1.0/24|West us 2|
+|EC2 AWS|172.16.1.4|subnet-aws|172.16.1.0/24|us-east-1|
+|GW Azure|Dinâmico|----|---|b|
+|GW AWS|Dinâmico|---|---|b|
 
 ## 8. Resolução de Problemas Comuns
 
@@ -294,13 +303,14 @@ Se a VPN estiver ativa e os firewalls corretamente configurados, a comunicação
 * **Endereços IP Públicos:** Verifique se os IPs públicos dos Gateways estão corretos e acessíveis.
 
 
-## 9. Considerações Finais A criação de uma VPN site-to-site entre Azure e AWS é um passo importante para ambientes corporativos que desejam trabalhar em infraestruturas híbridas ou multi-cloud. Esta configuração demonstrou ser eficaz para comunicação segura e privada entre dois ambientes distintos, sem necessidade de IPs públicos para testes.
+## 9. Considerações Finais 
+A criação de uma VPN site-to-site entre Azure e AWS é um passo importante para ambientes corporativos que desejam trabalhar em infraestruturas híbridas ou multi-cloud. Esta configuração demonstrou ser eficaz para comunicação segura e privada entre dois ambientes distintos, sem necessidade de IPs públicos para testes.
 
 ## 10. Referências
 
-Microsoft Learn - Conectar Azure a outra nuvem via VPN
+Microsoft Learn - [Conectar Azure a outra nuvem via VPN](https://learn.microsoft.com/pt-br/azure/vpn-gateway/)
 
-AWS Documentation - Site-to-Site VPN
+AWS Documentation - [Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html)
 
-RFC 4301 - IPsec Architecture
+RFC 4301 - [IPsec Architecture](https://datatracker.ietf.org/doc/html/rfc4301)
 
