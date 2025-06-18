@@ -70,7 +70,8 @@ Agora, criaremos a VNet que abrigará seus recursos no Azure.
 8.  Clique em **"Adicionar"**.
 9.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-![VNet](MultiCloud/2az%20-%20VNet.png)
+![VNet](MultiCloud/2az%20-%20Vnet.png)
+![VNet](MultiCloud/2.1az%20-%20Vnet.png)
 
 ## 3.1.4  [Criação da Subnet para o Gateway]
 
@@ -83,7 +84,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 5.  Para **"Intervalo de endereços IP"**, use um bloco adequado, como `10.0.2.224/27` (um /27 é o mínimo recomendado).
 6.  Clique em **"Adicionar"**.
 
-![GatewaySubnet](MultiCloud/3az%20-%20GatewaySubnet.png)
+![GatewaySubnet](MultiCloud/2.2az%20-%20sub%20gtw.png)
 
 ## 3.1.5  [Criação do Gateway de Rede Virtual (VPN Gateway)]
 
@@ -106,7 +107,8 @@ Este é o ponto de extremidade VPN do lado do Azure.
 15. Deixe **"Configurar BGP"** como `Desabilitado` (para VPN estática).
 16. Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-![VPN Gateway](MultiCloud/4az%20-%20VPN%20Gateway.png)
+![VPN Gateway](MultiCloud/3az%20-%20vpn.png)
+![VPN Gateway](MultiCloud/3az%20-%20vpn2.png)
 A criação do Gateway VPN pode levar de 30 a 45 minutos.
 
 ## 3.1.6  [Criação do Gateway de Rede Local]
@@ -161,7 +163,7 @@ Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recurs
 6.  Deixe as outras opções como padrão.
 7.  Clique em **"Create VPC"**.
 
-![VPC AWS](MultiCloud/1aws%20-%20VPC.png)
+![VPC AWS](MultiCloud/1aws%20-%20vpc.png)
 
 ## 3.2.3  [Criação da Subnet]
 
@@ -175,7 +177,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 6.  Em **"IPv4 subnet CIDR block"**, insira `172.16.1.0/24`.
 7.  Clique em **"Create subnet"**.
 
-![Subnet AWS](MultiCloud/2aws%20-%20Subnet.png)
+![Subnet AWS](MultiCloud/2aws%20-%20subnet.png)
 
 ## 3.2.4   [Criação do Customer Gateway]
 
@@ -186,7 +188,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 5.  **"IP Address"**: Insira o endereço IP público do Gateway VPN do Azure (será obtido após a criação do Gateway no Azure).
 6.  Clique em **"Create Customer Gateway"**.
 
-![Customer Gateway](MultiCloud/3aws%20-%20Customer%20Gateway.png)
+![Customer Gateway](MultiCloud/3aws%20-%20customer.png)
 
 ## 3.2.5   [Criação do Virtual Private Gateway (VPG)]
 
