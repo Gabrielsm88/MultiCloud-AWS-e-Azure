@@ -32,13 +32,13 @@ Este documento descreve a criação de um ambiente multi-cloud entre Microsoft A
 Azure
 Serviço: Máquina Virtual (Ubuntu Server 22.04)
 
-*Rede Virtual (VNet): vnet-azure
+*Rede Virtual (VNet): vnet-azure*
 
-**Sub-rede: subnet-azure-private
+**Sub-rede: subnet-azure-private**
 
-***IP Privado: 10.1.1.4
+***IP Privado: 10.1.1.4***
 
-Região: Brazil South
+****Região: Brazil South****
 
 Grupo de Recursos: rg-multicloud
 
