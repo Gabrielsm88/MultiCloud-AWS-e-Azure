@@ -108,7 +108,10 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
     
 9.  Clique em **"Adicionar"** para cada regra.
 
-()
+![nsg](MultiCloud/4az%20-%20nsg1.png)
+![nsgr1](MultiCloud/4.1az%20-%20nsg2.png)
+![nsgr2](MultiCloud/4.3az%20-%20nsg3.png)
+![nsgr3](MultiCloud/4.3az%20-%20nsg.png)
 
 #### 3.1.6 Criação da Máquina Virtual
 
