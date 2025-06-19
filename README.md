@@ -93,15 +93,19 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 
 1.  No portal do Azure, pesquise por "Grupos de segurança de rede" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
-3.  Para **"Nome"**, digite `nsg-allow-multicloud`.
+3.  Para **"Nome"**, digite `nsg-multicloud`.
 4.  Selecione a mesma **"Região"** (`West US 2`).
 5.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
-6.  Após a criação, navegue até o `nsg-allow-multicloud`.
+6.  Após a criação, navegue até o `nsg-multicloud`.
 7.  No menu esquerdo, clique em **"Regras de segurança de entrada"**.
 8.  Clique em **"+ Adicionar"** e adicione as seguintes regras:
-    * **Nome**: `Allow-AWS-ICMP` | **Prioridade**: `100` | **Origem**: `Endereços IP` | **Intervalos de IP de origem**: `172.16.0.0/16` | **Portas de destino**: `Qualquer` | **Protocolo**: `ICMP` | **Ação**: `Permitir`
-    * **Nome**: `Allow-AWS-SSH-RDP` | **Prioridade**: `110` | **Origem**: `Endereços IP` | **Intervalos de IP de origem**: `172.16.0.0/16` | **Portas de destino**: `22` (SSH) ou `3389` (RDP) | **Protocolo**: `TCP` | **Ação**: `Permitir`
-    * (Opcional) **Nome**: `Allow-MyIP-SSH-RDP` | **Prioridade**: `120` | **Origem**: `Endereços IP` | **Intervalos de IP de origem**: `Seu IP Público` | **Portas de destino**: `22` (SSH) ou `3389` (RDP) | **Protocolo**: `TCP` | **Ação**: `Permitir`
+
+  | Nome | Prioridade | Origem | Intervalos de IP de origem | Portas de Destino | Protocolo | Ação |
+|------|------------|--------|----------------------------|-------------------|-----------|------|
+| AWS-ICMP | 100 | Endereços IP | 172.16.0.0/16 | Qualquer | ICMP | Permitir |
+| AWS-SSH-RDP | 110 | Endereços IP | 172.16.0.0/16 | 22 (SSH) ou 3389 (RDP) | TCP | Permitir |
+| Meu-IP-SSH-RDP | 120 | Endereços IP | Seu IP Público | 22 (SSH) ou 3389 (RDP) | TCP | Permitir |
+    
 9.  Clique em **"Adicionar"** para cada regra.
 
 ()
