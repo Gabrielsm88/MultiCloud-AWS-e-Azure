@@ -9,7 +9,7 @@ O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuni
 - [2. Arquitetura da Solução](#2-arquitetura-da-solução)
 - [3. Provisionamento das Máquinas Virtuais](#3-provisionamento-das-máquinas-virtuais)
 - [4. Configuração da VPN Site-to-Site](#4-configuração-da-vpn-site-to-site)
-- [5. Configuração de Rede e Segurança](#5-configuração-de-rede-e-segurança)
+- [5. Configuração de Rede](#5-configuração-de-rede)
 - [6. Testes de Conectividade](#6-testes-de-conectividade)
 - [7. Tabelas de Configuração](#7-tabelas-de-configuração)
 - [8. Resolução de Problemas Comuns](#8-resolução-de-problemas-comuns)
@@ -22,6 +22,7 @@ O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuni
 A integração será estabelecida através de uma VPN Site-to-Site.
 A AWS VPC terá um bloco CIDR "172.16.0.0/16" e a Azure VNet terá "10.0.0.0/16". 
 Cada nuvem configura um Gateway VPN que se conecta ao outro, permitindo que as sub-redes em ambas as extremidades se comuniquem.
+
 
 ## 2. Arquitetura da Solução
 
@@ -40,7 +41,9 @@ Sub-rede: subnet-azure-private (10.0.1.0/24) <br>
 IP Privado: 10.0.1.4 <br>
 Região: West US 2 <br>
 Grupo de Recursos: gr-multicloud <br>
-Grupo de Segurança de Rede (NSG): nsg-multicloud <br>
+Grupo de Segurança de Rede (NSG): nsg-multicloud 
+
+##
 
 ### 3.1.1  [Criação do Grupo de Recursos]
 
@@ -88,7 +91,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 
 ![GatewaySubnet](MultiCloud/azure%20-%20sub%20gtw.png)
 
-### 3.1.4 Criação do Network Security Group (NSG)
+### 3.1.4  [Criação do Network Security Group (NSG)]
 
 1.  No portal do Azure, pesquise por "Grupos de segurança de rede" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
@@ -114,7 +117,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 ![nsg2](MultiCloud/azure%20-%20nsg2.png)
 ![nsg3](MultiCloud/azure%20-%20nsg3.png)
 
-### 3.1.5 Criação da Máquina Virtual
+###  [3.1.5 Criação da Máquina Virtual]
 
 1.  No portal do Azure, pesquise por "Máquinas virtuais" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
@@ -146,16 +149,19 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 
 ![vm3](MultiCloud/azure%20-%20vm3.png)
 
-========================================================================================================
+##
+<br>
 
-
-## 3.2 Configurações na AWS
+## 3.2 - Configurações na AWS
 
 AWS Serviço: EC2 (Amazon Linux) <br>
-VPC: vpc-aws <br>
-Sub-rede: subnet-aws-private <br>
-IP Privado: 10.0.2.4 <br>
+VPC: vpc-aws (172.16.0.0/16) <br>
+Sub-rede: subnet-aws-private (172.16.1.0/24) <br>
+IP Privado: 172.16.1.4 <br>
 Região: us-east-1 <br>
+Security Group: multicloud-sg
+
+##
 
 ### 3.2.1  [Criação da VPC]
 
@@ -171,7 +177,7 @@ Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recurs
 
 ![vpc](MultiCloud/aws%20-%20vpc.png)
 
-## 3.2.2  [Criação da Subnet]
+### 3.2.2  [Criação da Subnet]
 
 Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
@@ -185,96 +191,55 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 ![subnet](MultiCloud/aws%20-%20subnet.png)
 
-### 3.2.3 [Criação do Security Group]
+### 3.2.3  [Criação do Security Group]
 
 1.  No console da AWS, navegue até **EC2 > Security Groups**.
 2.  Clique em **"Create security group"**.
-3.  **"Security group name"**: `sg-allow-multicloud`.
-4.  **"Description"**: `Allow traffic from Azure VNet for VPN testing`.
+3.  **"Security group name"**: `multicloud-sg`.
+4.  **"Description"**: `liberar trafego do azure vnet para vpn`.
 5.  **"VPC"**: Selecione a `vpc-aws`.
 6.  **"Inbound rules"**: Adicione as seguintes regras:
-    * **Type**: `All ICMP - IPv4` | **Source**: `10.0.0.0/16` (VNet CIDR do Azure)
-    * **Type**: `SSH` (ou `RDP` se for Windows) | **Source**: `10.0.0.0/16` (para acesso da VM do Azure à EC2)
-    * **Type**: `SSH` (ou `RDP`) | **Source**: `My IP` (para seu acesso inicial à EC2)
+  | Type | Source | Description |
+|---------|--------|-------------|
+| All ICMP - IPv4 | 10.0.0.0/16 | VNet CIDR do Azure | 
+| SSH ou RDP | 10.0.0.0/16 | Acesso da VM do Azure a EC2 | 
+| SSH ou RDP | My IP | Acesso inicial a EC2 | 
 7.  **"Outbound rules"**: Deixe o padrão (All traffic, All IPs) ou restrinja, mas para teste, o padrão é suficiente.
 8.  Clique em **"Create security group"**.
 
-### 3.2.4 [Criação da Instância EC2]
+![sg](MultiCloud/aws%20-%20sg.png)
+
+### 3.2.4  [Criação da Instância EC2]
 
 1.  No console da AWS, navegue até **EC2 > Instances**.
 2.  Clique em **"Launch instances"**.
-3.  **"Name"**: `ec2-aws-test`.
+3.  **"Name"**: `ec2-aws`.
 4.  Selecione uma **"AMI"** (ex: Amazon Linux 2 AMI).
+
+![instance](MultiCloud/aws%20-%20instance0.png)
+
 5.  Selecione um **"Instance type"** (ex: `t2.micro`).
-6.  **"Key pair (login)"**: Selecione um par de chaves existente ou crie um novo.
+6.  **"Key pair (login)"**: Selecione um par de chaves existente ou crie um novo. (ex: `vockey`)
+
+![instance](MultiCloud/aws%20-%20instance1.png)
+
 7.  **"Network settings"**:
     * **"VPC"**: Selecione `vpc-aws`.
     * **"Subnet"**: Selecione `subnet-aws-private` (`172.16.1.0/24`).
     * **"Auto-assign public IP"**: `Disable` (para forçar o tráfego via VPN, ou `Enable` para testar conectividade pública separadamente).
-    * **"Firewall (security groups)"**: Selecione `Select an existing security group` e escolha `sg-allow-multicloud`.
+    * **"Firewall (security groups)"**: Selecione `Select an existing security group` e escolha `multicloud-sg`.
 8.  Configure o armazenamento e outras tags conforme necessário.
 9.  Clique em **"Launch instance"**.
 10. Anote o **endereço IP privado** da instância EC2 (ex: `172.16.1.X`).
 
+![instance](MultiCloud/aws%20-%20instance2.png)
 
-
-================================================================================================
-
+==============================================revisar============================
 ## 4. Configuração da VPN Site-to-Site
 
-AWS (VPN Gateway e Customer Gateway) 
+Azure (Gateway de VPN)
 
-## 4.1 [Criação do Customer Gateway]
-
-1.  No console da AWS, navegue até **VPC > Customer Gateways**.
-2.  Clique em **"Create Customer Gateway"**.
-3.  **"Name"**: `ctm-gtw-aws`.
-4.  **"Routing"**: `Static` (para teste, mas BGP é recomendado para produção).
-5.  **"IP Address"**: Insira o endereço IP público do Gateway VPN do Azure (será obtido após a criação do Gateway no Azure).
-6.  Clique em **"Create Customer Gateway"**.
-
-![Customer Gateway](MultiCloud/3aws%20-%20customer.png)
-
-## 4.2 [Criação do Virtual Private Gateway (VPG)]
-
-1.  No console da AWS, navegue até **VPC > Virtual Private Gateways**.
-2.  Clique em **"Create Virtual Private Gateway"**.
-3.  **"Name tag"**: `vpg-aws`.
-4.  Deixe o resto como padrão.
-5.  Clique em **"Create Virtual Private Gateway"**.
-6.  Após a criação, selecione o VPG e clique em **"Actions > Attach to VPC"**.
-7.  Selecione sua VPC (`vpc-aws`) e clique em **"Attach"**.
-
-![Virtual Private Gateway (VPG)](MultiCloud/4aws%20-%20vpg.png)
-![Virtual Private Gateway (VPG)](MultiCloud/4aws%20-%20vpg2.png)
-![Virtual Private Gateway (VPG)](MultiCloud/4aws%20-%20vpg3.png)
-
-## 4.3 [Criação da Conexão VPN (Site-to-Site)]
-
-1.  No console da AWS, navegue até **VPC > Site-to-Site VPN Connections**.
-2.  Clique em **"Create VPN Connection"**.
-3.  **"Name"**: `vpn-aws-azure`.
-4.  **"Target Gateway Type"**: `Virtual Private Gateway`.
-5.  **"Virtual Private Gateway"**: Selecione o `vpg-aws` criado anteriormente.
-6.  **"Customer Gateway"**: `Existing`.
-7.  **"Customer Gateway ID"**: Selecione o `ctm-gtw-aws` criado anteriormente.
-8.  **"Routing Options"**: `Static`.
-9.  **"Static IP Prefixes"**: Adicione o bloco CIDR da VNet do Azure (`10.0.0.0/16`).
-10. **"Tunnel Inside IP Version"**: `IPv4`.
-11. **"Local IPv4 Network CIDR"**: `172.16.0.0/16` (CIDR da sua VPC AWS).
-12. **"Remote IPv4 Network CIDR"**: `10.0.0.0/16` (CIDR da sua VNet Azure).
-13. **"Tunnel Options"**: Pode deixar como padrão ou personalizar (ex: chaves pré-compartilhadas).
-14. Clique em **"Create VPN Connection"**.
-
-Após a criação, você poderá "Download Configuration" para obter os detalhes do túnel, incluindo os IPs públicos dos endpoints da AWS VPN. Guarde esses IPs, pois você precisará deles para a configuração no Azure.
-
-Configurar a rota 10.1.1.0/24 (Azure) na tabela de rotas da AWS.
-
-=======================================
-
-Etapa 2: Azure (Gateway de VPN) Criar o Gateway de VPN (VPN Gateway, tipo: Route-based).
-
-## 4.4 [Criação do Gateway de Rede Virtual (VPN Gateway)]
+### 4.1  [Criação do Gateway de Rede Virtual (VPN Gateway)]
 
 Este é o ponto de extremidade VPN do lado do Azure.
 
@@ -295,11 +260,11 @@ Este é o ponto de extremidade VPN do lado do Azure.
 15. Deixe **"Configurar BGP"** como `Desabilitado` (para VPN estática).
 16. Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-![VPN Gateway](MultiCloud/3az%20-%20vpn.png)
-![VPN Gateway](MultiCloud/3az%20-%20vpn2.png)
+![VPN Gateway](MultiCloud/azure%20-%20vpn0.png)
+![VPN Gateway](MultiCloud/azure%20-%20vpn1.png)
 A criação do Gateway VPN pode levar de 30 a 45 minutos.
 
-## 4.5 [Criação do Gateway de Rede Local]
+### 4.2  [Criação do Gateway de Rede Local]
 
 O Gateway de Rede Local representa o Customer Gateway (a AWS VPC) para o Azure.
 
@@ -312,7 +277,8 @@ O Gateway de Rede Local representa o Customer Gateway (a AWS VPC) para o Azure.
 7.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
 
-## 4.6 [Criação da Conexão]
+
+### 4.3  [Criação da Conexão]
 
 Finalmente, crie a conexão entre o Gateway de Rede Virtual do Azure e o Gateway de Rede Local.
 
@@ -329,30 +295,79 @@ Finalmente, crie a conexão entre o Gateway de Rede Virtual do Azure e o Gateway
 
 Inserir chave pré-compartilhada (PSK) igual à usada na AWS.
 
-Configurar a rota 10.2.1.0/24 (AWS) no Azure.
+=======================================revisar==================================
+
+AWS (VPN Gateway e Customer Gateway) 
+
+### 4.4  [Criação do Customer Gateway]
+
+1.  No console da AWS, navegue até **VPC > Customer Gateways**.
+2.  Clique em **"Create Customer Gateway"**.
+3.  **"Name"**: `ctm-gtw-aws`.
+4.  **"Routing"**: `Static` (para teste, mas BGP é recomendado para produção).
+5.  **"IP Address"**: Insira o endereço IP público do Gateway VPN do Azure (será obtido após a criação do Gateway no Azure).
+6.  Clique em **"Create Customer Gateway"**.
+
+![Customer Gateway](MultiCloud/aws%20-%20customer.png)
+
+### 4.5  [Criação do Virtual Private Gateway (VPG)]
+
+1.  No console da AWS, navegue até **VPC > Virtual Private Gateways**.
+2.  Clique em **"Create Virtual Private Gateway"**.
+3.  **"Name tag"**: `vpg-aws`.
+4.  Deixe o resto como padrão.
+5.  Clique em **"Create Virtual Private Gateway"**.
+6.  Após a criação, selecione o VPG e clique em **"Actions > Attach to VPC"**.
+7.  Selecione sua VPC (`vpc-aws`) e clique em **"Attach"**.
+
+![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg0.png)
+![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg1.png)
+![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg2.png)
+
+### 4.6  [Criação da Conexão VPN (Site-to-Site)]
+
+1.  No console da AWS, navegue até **VPC > Site-to-Site VPN Connections**.
+2.  Clique em **"Create VPN Connection"**.
+3.  **"Name"**: `vpn-aws-azure`.
+4.  **"Target Gateway Type"**: `Virtual Private Gateway`.
+5.  **"Virtual Private Gateway"**: Selecione o `vpg-aws` criado anteriormente.
+6.  **"Customer Gateway"**: `Existing`.
+7.  **"Customer Gateway ID"**: Selecione o `ctm-gtw-aws` criado anteriormente.
+8.  **"Routing Options"**: `Static`.
+9.  **"Static IP Prefixes"**: Adicione o bloco CIDR da VNet do Azure (`10.0.0.0/16`).
+10. **"Tunnel Inside IP Version"**: `IPv4`.
+11. **"Local IPv4 Network CIDR"**: `172.16.0.0/16` (CIDR da sua VPC AWS).
+12. **"Remote IPv4 Network CIDR"**: `10.0.0.0/16` (CIDR da sua VNet Azure).
+13. **"Tunnel Options"**: Pode deixar como padrão ou personalizar (ex: chaves pré-compartilhadas).
+14. Clique em **"Create VPN Connection"**.
+
+Após a criação, você poderá "Download Configuration" para obter os detalhes do túnel, incluindo os IPs públicos dos endpoints da AWS VPN. Guarde esses IPs, pois você precisará deles para a configuração no Azure.
+
 
 Dica: Certifique-se que ambas as VPNs estejam com IPsec/IKEv2 e mesmo algoritmo de criptografia (Ex: AES256/SHA256/DH14).
 
 ==========================================
 
-## 5. Configuração de Rede e Segurança Grupos de Segurança / Firewall 
+## 5. Configuração de Rede
 
-- **Azure:** liberar ICMP (ping) e SSH da sub-rede `172.16.1.0/24`
-- **AWS:** liberar ICMP (ping) e SSH da sub-rede `10.0.1.0/24`
+- Configurar a rota 172.16.1.0/24 (AWS) no Azure.
+- Configurar a rota 10.0.1.0/24 (Azure) na tabela de rotas da AWS.
 
 ### Tabelas de Roteamento
 
 #### Azure - Tabela de Rota 
-|Nome | Prefixo | Próximo salto |
+| Nome | Prefixo | Próximo salto |
 |-------|----------|----------------|
-|rotaAWS | 172.16.1.0/24 | Gateway de VPN (Azure) |
+| rotaAWS | 172.16.1.0/24 | Gateway de VPN (Azure) |
 
 #### AWS - Tabela de Rota 
 | Nome | Prefixo | Próximo salto |
 |------|--------|--------------|
 | rotaAzure | 10.0.1.0/24 | Virtual Private Gateway |
 
-Marcar “Propagar rotas do gateway” na AWS para o VPN Gateway.
+
+[comment]: # (Marcar “Propagar rotas do gateway” na AWS para o VPN Gateway.)
+
 
 
 ## 6. Testes de Conectividade
@@ -398,9 +413,9 @@ Se a VPN estiver ativa e os firewalls corretamente configurados, a comunicação
  | Recurso | IP Privado | Sub-rede | CIDR | Região | 
 |---------------|----------------|---------------|---------|------------|
 |VM Azure|10.0.1.4|subnet-azure-private|10.0.1.0/24|West US 2|
-|EC2 AWS|172.16.1.4|subnet-aws-private|172.16.1.0/24|us-east-1a|
-|GW Azure|Dinâmico|----|---|x|
-|GW AWS|Dinâmico|---|---|y|
+|EC2 AWS|172.16.1.4|subnet-aws-private|172.16.1.0/24|us-east-1|
+|GW Azure|Dinâmico|----|---|West US 2|
+|GW AWS|Dinâmico|---|---|us-east-1|
 
 
 ## 8. Resolução de Problemas Comuns
