@@ -52,7 +52,7 @@ Um grupo de recursos é um contêiner lógico para os recursos do Azure.
 4.  Selecione a **"Região"** (ex: `(US) West US 2`).
 5.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-![Grupo de Recursos](MultiCloud/1az%20-%20Grupo%20de%20Recursos.png)
+![Grupo de Recursos](MultiCloud/azure%20-%20gr.png)
 
 ### 3.1.2  [Criação da Virtual Network (VNet)]
 
@@ -62,16 +62,18 @@ Agora, criaremos a VNet que abrigará seus recursos no Azure.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
 3.  Para **"Nome da rede virtual"**, digite `vnet-azure`.
 4.  Selecione a mesma **"Região"** (`West US 2`).
-5.  Vá para a aba **"Endereços IP"**.
-6.  O espaço de endereço padrão é `10.0.0.0/16`. Mantenha-o.
-7.  **Adicionar sub-rede**:
+
+![vnet0](MultiCloud/azure%20-%20vnet0.png)
+
+7.  Vá para a aba **"Endereços IP"**.
+8.  O espaço de endereço padrão é `10.0.0.0/16`. Mantenha-o.
+9.  **Adicionar sub-rede**:
     * **"Nome da sub-rede"**: `subnet-azure-private`.
     * **"Intervalo de endereços IP"**: `10.0.1.0/24`.
-8.  Clique em **"Adicionar"**.
-9.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
+10.  Clique em **"Adicionar"**.
+11.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
 
-![VNet](MultiCloud/2az%20-%20Vnet.png)
-![VNet](MultiCloud/2.1az%20-%20Vnet.png)
+![vnet1](MultiCloud/azure%20-%20vnet1.png)
 
 ### 3.1.3  [Criação da Subnet para o Gateway]
 
@@ -84,7 +86,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 5.  Para **"Intervalo de endereços IP"**, use um bloco adequado, como `10.0.2.224/27` (um /27 é o mínimo recomendado).
 6.  Clique em **"Adicionar"**.
 
-![GatewaySubnet](MultiCloud/2.2az%20-%20sub%20gtw.png)
+![GatewaySubnet](MultiCloud/azure%20-%20sub%20gtw.png)
 
 ### 3.1.4 Criação do Network Security Group (NSG)
 
@@ -93,6 +95,9 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 3.  Para **"Nome"**, digite `nsg-multicloud`.
 4.  Selecione a mesma **"Região"** (`West US 2`).
 5.  Clique em **"Revisar + criar"** e depois em **"Criar"**.
+
+![nsg0](MultiCloud/azure%20-%20nsg0.png)
+
 6.  Após a criação, navegue até o `nsg-multicloud`.
 7.  No menu esquerdo, clique em **"Regras de segurança de entrada"**.
 8.  Clique em **"+ Adicionar"** e adicione as seguintes regras:
@@ -105,10 +110,9 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
     
 9.  Clique em **"Adicionar"** para cada regra.
 
-![nsg](MultiCloud/4az%20-%20nsg1.png)
-![nsgr1](MultiCloud/4.1az%20-%20nsg2.png)
-![nsgr2](MultiCloud/4.3az%20-%20nsg3.png)
-![nsgr3](MultiCloud/4.3az%20-%20nsg.png)
+![nsg1](MultiCloud/azure%20-%20nsg1.png)
+![nsg2](MultiCloud/azure%20-%20nsg2.png)
+![nsg3](MultiCloud/azure%20-%20nsg3.png)
 
 ### 3.1.5 Criação da Máquina Virtual
 
@@ -118,10 +122,19 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 4.  Selecione a mesma **"Região"** (`West US 2`).
 5.  **"Opções de segurança"**: Selecione `Standard`.
 6.  **"Imagem"**: Escolha uma imagem (ex: `Ubuntu Server 24.04 LTS` ou `Windows Server 2019 Datacenter`).
+
+![vm0](MultiCloud/azure%20-%20vm0.png)
+
 7.  **"Tamanho"**: Selecione um tamanho (ex: `Standard_B1s` ou `Standard_B2as_v2`).
 8.  **"Tipo de autenticação"**: `Chave pública SSH` ou `Senha`. Configure as credenciais de login.
 9.  **"Regras da porta de entrada"**: `Nenhuma`. O NSG que criamos irá gerenciar isso.
+
+![vm1](MultiCloud/azure%20-%20vm1.png)
+
 10. **"Discos"**: Deixe o padrão ou configure conforme necessário.
+
+![vm2](MultiCloud/azure%20-%20vm2.png)
+
 11. **"Rede"**:
     * **"Rede virtual"**: Selecione `vnet-azure`.
     * **"Sub-rede"**: Selecione `subnet-azure-private` (`10.0.1.0/24`).
@@ -131,10 +144,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 13. Clique em **"Revisar + criar"** e depois em **"Criar"**.
 14. Anote o **endereço IP privado** da VM do Azure (ex: `10.0.1.X`).
 
-![vm0](MultiCloud/5az%20-%20vm.png)
-![vm1](MultiCloud/5.1az%20-%20vm.png)
-![vm2](MultiCloud/5.2az%20-%20vm.png)
-![vm3](MultiCloud/5.3az%20-%20vm.png)
+![vm3](MultiCloud/azure%20-%20vm3.png)
 
 ========================================================================================================
 
@@ -146,8 +156,6 @@ VPC: vpc-aws <br>
 Sub-rede: subnet-aws-private <br>
 IP Privado: 10.0.2.4 <br>
 Região: us-east-1 <br>
-
-
 
 ### 3.2.1  [Criação da VPC]
 
@@ -161,7 +169,7 @@ Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recurs
 6.  Deixe as outras opções como padrão.
 7.  Clique em **"Create VPC"**.
 
-![VPC AWS](MultiCloud/1aws%20-%20vpc.png)
+![vpc](MultiCloud/aws%20-%20vpc.png)
 
 ## 3.2.2  [Criação da Subnet]
 
@@ -175,7 +183,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 6.  Em **"IPv4 subnet CIDR block"**, insira `172.16.1.0/24`.
 7.  Clique em **"Create subnet"**.
 
-![Subnet AWS](MultiCloud/2aws%20-%20subnet.png)
+![subnet](MultiCloud/aws%20-%20subnet.png)
 
 ### 3.2.3 [Criação do Security Group]
 
