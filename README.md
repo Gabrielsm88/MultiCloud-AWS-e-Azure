@@ -117,7 +117,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 ![nsg2](MultiCloud/azure%20-%20nsg2.png)
 ![nsg3](MultiCloud/azure%20-%20nsg3.png)
 
-###  [3.1.5 Criação da Máquina Virtual]
+### 3.1.5  [Criação da Máquina Virtual]
 
 1.  No portal do Azure, pesquise por "Máquinas virtuais" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
@@ -199,11 +199,13 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 4.  **"Description"**: `liberar trafego do azure vnet para vpn`.
 5.  **"VPC"**: Selecione a `vpc-aws`.
 6.  **"Inbound rules"**: Adicione as seguintes regras:
-  | Type | Source | Description |
-|---------|--------|-------------|
+
+| Type | Source | Description |
+|------|--------|-------------|
 | All ICMP - IPv4 | 10.0.0.0/16 | VNet CIDR do Azure | 
 | SSH ou RDP | 10.0.0.0/16 | Acesso da VM do Azure a EC2 | 
 | SSH ou RDP | My IP | Acesso inicial a EC2 | 
+
 7.  **"Outbound rules"**: Deixe o padrão (All traffic, All IPs) ou restrinja, mas para teste, o padrão é suficiente.
 8.  Clique em **"Create security group"**.
 
@@ -234,10 +236,10 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 ![instance](MultiCloud/aws%20-%20instance2.png)
 
-==============================================revisar============================
+
 ## 4. Configuração da VPN Site-to-Site
 
-Azure (Gateway de VPN)
+* **Azure (Gateway de VPN)**
 
 ### 4.1  [Criação do Gateway de Rede Virtual (VPN Gateway)]
 
@@ -248,21 +250,23 @@ Este é o ponto de extremidade VPN do lado do Azure.
 3.  Para **"Nome"**, digite `vpn-gtw-azure`.
 4.  Selecione a mesma **"Região"** (`West US 2`).
 5.  Para **"Tipo de gateway"**, selecione `VPN`.
-6.  Para **"Tipo de VPN"**, selecione `Baseado em rota` (Route-based) ou `Baseado em política` (Policy-based). Para integração com AWS, geralmente `Baseado em rota` é a melhor escolha.
-7.  Para **"SKU"**, selecione um SKU apropriado (ex: `VpnGw1`).
-8.  Para **"Geração"**, selecione `Geração1`.
-9.  Para **"Rede virtual"**, selecione `vnet-azure`. A sub-rede do gateway (`GatewaySubnet`) será preenchida automaticamente.
-10. Para **"Endereço IP público"**, selecione **"Criar novo"**.
-11. Para **"Nome do endereço IP público"**, digite `pub-azure-aws`.
-12. Para **"SKU do endereço IP público"**, selecione `Standard`.
-13. Para **"Atribuição"**, selecione `Estático`.
-14. Deixe **"Habilitar o modo ativo-ativo"** como `Desabilitado`.
-15. Deixe **"Configurar BGP"** como `Desabilitado` (para VPN estática).
-16. Clique em **"Revisar + criar"** e depois em **"Criar"**.
+6.  Para **"SKU"**, selecione um SKU apropriado (ex: `VpnGw1`).
+7.  Para **"Geração"**, selecione `Geração1`.
+8.  Para **"Rede virtual"**, selecione `vnet-azure`. A sub-rede do gateway (`GatewaySubnet`) será preenchida automaticamente.
 
 ![VPN Gateway](MultiCloud/azure%20-%20vpn0.png)
+
+9. Para **"Endereço IP público"**, selecione **"Criar novo"**.
+10. Para **"Nome do endereço IP público"**, digite `pub-azure-aws`.
+11. Para **"SKU do endereço IP público"**, selecione `Standard`.
+12. Para **"Atribuição"**, selecione `Estático`.
+13. Deixe **"Habilitar o modo ativo-ativo"** como `Desabilitado`.
+14. Deixe **"Configurar BGP"** como `Desabilitado` (para VPN estática).
+15. Clique em **"Revisar + criar"** e depois em **"Criar"**.
+
 ![VPN Gateway](MultiCloud/azure%20-%20vpn1.png)
-A criação do Gateway VPN pode levar de 30 a 45 minutos.
+
+* **A criação do Gateway VPN pode levar de 30 a 45 minutos.**
 
 ### 4.2  [Criação do Gateway de Rede Local]
 
@@ -295,16 +299,15 @@ Finalmente, crie a conexão entre o Gateway de Rede Virtual do Azure e o Gateway
 
 Inserir chave pré-compartilhada (PSK) igual à usada na AWS.
 
-=======================================revisar==================================
 
-AWS (VPN Gateway e Customer Gateway) 
+
+* **AWS (VPN Gateway e Customer Gateway)** 
 
 ### 4.4  [Criação do Customer Gateway]
 
 1.  No console da AWS, navegue até **VPC > Customer Gateways**.
 2.  Clique em **"Create Customer Gateway"**.
 3.  **"Name"**: `ctm-gtw-aws`.
-4.  **"Routing"**: `Static` (para teste, mas BGP é recomendado para produção).
 5.  **"IP Address"**: Insira o endereço IP público do Gateway VPN do Azure (será obtido após a criação do Gateway no Azure).
 6.  Clique em **"Create Customer Gateway"**.
 
@@ -317,10 +320,12 @@ AWS (VPN Gateway e Customer Gateway)
 3.  **"Name tag"**: `vpg-aws`.
 4.  Deixe o resto como padrão.
 5.  Clique em **"Create Virtual Private Gateway"**.
+
+![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg0.png)
+
 6.  Após a criação, selecione o VPG e clique em **"Actions > Attach to VPC"**.
 7.  Selecione sua VPC (`vpc-aws`) e clique em **"Attach"**.
 
-![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg0.png)
 ![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg1.png)
 ![Virtual Private Gateway (VPG)](MultiCloud/aws%20-%20vpg2.png)
 
@@ -346,7 +351,7 @@ Após a criação, você poderá "Download Configuration" para obter os detalhes
 
 Dica: Certifique-se que ambas as VPNs estejam com IPsec/IKEv2 e mesmo algoritmo de criptografia (Ex: AES256/SHA256/DH14).
 
-==========================================
+
 
 ## 5. Configuração de Rede
 
