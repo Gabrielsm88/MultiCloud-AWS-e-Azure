@@ -1,6 +1,6 @@
 # Integração Multi-Cloud: Azure e AWS (VPN Site-to-Site)
 
-Este documento descreve a criação de um ambiente multi-cloud entre Microsoft Azure e Amazon Web Services (AWS), com comunicação privada via VPN Site-to-Site. 
+Este documento descreve a criação de um ambiente multi-cloud entre Microsoft Azure e Amazon Web Services (AWS), com comunicação privada via VPN Site-to-Site.
 O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuniquem entre si apenas por IPs privados.
 
 ## Sumário
@@ -19,7 +19,7 @@ O objetivo é permitir que duas máquinas virtuais (uma em cada nuvem) se comuni
 
 ## 1. Visão Geral da Arquitetura
 
-A integração será estabelecida através de uma VPN Site-to-Site. 
+A integração será estabelecida através de uma VPN Site-to-Site.
 A AWS VPC terá um bloco CIDR "172.16.0.0/16" e a Azure VNet terá "10.0.0.0/16". 
 Cada nuvem configura um Gateway VPN que se conecta ao outro, permitindo que as sub-redes em ambas as extremidades se comuniquem.
 
@@ -32,18 +32,17 @@ Cada nuvem configura um Gateway VPN que se conecta ao outro, permitindo que as s
 
 ## 3. Provisionamento das Máquinas Virtuais
 
-## 3.1 - Azure
+### 3.1 - Configurações na Azure
 
 Azure Serviço: Ubuntu <br>
-Rede Virtual (VNet): vnet-azure <br>
-Sub-rede: subnet-azure-private <br>
+Rede Virtual (VNet): vnet-azure (10.0.0.0/16) <br>
+Sub-rede: subnet-azure-private (10.0.1.0/24) <br>
 IP Privado: 10.0.1.4 <br>
-Região: West us 2 <br>
+Região: West US 2 <br>
 Grupo de Recursos: gr-multicloud <br>
+Grupo de Segurança de Rede (NSG): nsg-multicloud <br>
 
-## 3.1.1 [Configurações na Azure]
-
-## 3.1.2  [Criação do Grupo de Recursos]
+### 3.1.1  [Criação do Grupo de Recursos]
 
 Um grupo de recursos é um contêiner lógico para os recursos do Azure.
 
@@ -55,7 +54,7 @@ Um grupo de recursos é um contêiner lógico para os recursos do Azure.
 
 ![Grupo de Recursos](MultiCloud/1az%20-%20Grupo%20de%20Recursos.png)
 
-## 3.1.3  [Criação da Virtual Network (VNet)]
+### 3.1.2  [Criação da Virtual Network (VNet)]
 
 Agora, criaremos a VNet que abrigará seus recursos no Azure.
 
@@ -74,7 +73,7 @@ Agora, criaremos a VNet que abrigará seus recursos no Azure.
 ![VNet](MultiCloud/2az%20-%20Vnet.png)
 ![VNet](MultiCloud/2.1az%20-%20Vnet.png)
 
-## 3.1.4  [Criação da Subnet para o Gateway]
+### 3.1.3  [Criação da Subnet para o Gateway]
 
 O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubnet`.
 
@@ -87,9 +86,7 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 
 ![GatewaySubnet](MultiCloud/2.2az%20-%20sub%20gtw.png)
 
-=====================================================================================================================================
-
-#### 3.1.5 Criação do Network Security Group (NSG)
+### 3.1.4 Criação do Network Security Group (NSG)
 
 1.  No portal do Azure, pesquise por "Grupos de segurança de rede" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
@@ -113,15 +110,15 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
 ![nsgr2](MultiCloud/4.3az%20-%20nsg3.png)
 ![nsgr3](MultiCloud/4.3az%20-%20nsg.png)
 
-#### 3.1.6 Criação da Máquina Virtual
+### 3.1.5 Criação da Máquina Virtual
 
 1.  No portal do Azure, pesquise por "Máquinas virtuais" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
-3.  Para **"Nome da máquina virtual"**, digite `vm-azure-test`.
+3.  Para **"Nome da máquina virtual"**, digite `vm-azure`.
 4.  Selecione a mesma **"Região"** (`West US 2`).
 5.  **"Opções de segurança"**: Selecione `Standard`.
-6.  **"Imagem"**: Escolha uma imagem (ex: `Ubuntu Server 22.04 LTS` ou `Windows Server 2019 Datacenter`).
-7.  **"Tamanho"**: Selecione um tamanho (ex: `Standard_B1s`).
+6.  **"Imagem"**: Escolha uma imagem (ex: `Ubuntu Server 24.04 LTS` ou `Windows Server 2019 Datacenter`).
+7.  **"Tamanho"**: Selecione um tamanho (ex: `Standard_B1s` ou `Standard_B2as_v2`).
 8.  **"Tipo de autenticação"**: `Chave pública SSH` ou `Senha`. Configure as credenciais de login.
 9.  **"Regras da porta de entrada"**: `Nenhuma`. O NSG que criamos irá gerenciar isso.
 10. **"Discos"**: Deixe o padrão ou configure conforme necessário.
@@ -129,16 +126,20 @@ O Gateway de Rede Virtual precisa de uma sub-rede dedicada chamada `GatewaySubne
     * **"Rede virtual"**: Selecione `vnet-azure`.
     * **"Sub-rede"**: Selecione `subnet-azure-private` (`10.0.1.0/24`).
     * **"IP público"**: Selecione `Nenhum` (para forçar o tráfego via VPN). Se precisar de acesso público inicial, pode criar um e depois desassociá-lo.
-    * **"Grupo de segurança de rede da NIC"**: Selecione `Grupo de segurança de rede básico` e escolha `nsg-allow-multicloud`.
+    * **"Grupo de segurança de rede da NIC"**: Selecione `Grupo de segurança de rede avançado` e escolha `nsg-multicloud`.
 12. Configure as demais abas (Gerenciamento, Monitoramento, Avançado, Marcas) conforme necessário.
 13. Clique em **"Revisar + criar"** e depois em **"Criar"**.
 14. Anote o **endereço IP privado** da VM do Azure (ex: `10.0.1.X`).
 
+![vm0](MultiCloud/5az%20-%20vm.png)
+![vm1](MultiCloud/5.1az%20-%20vm.png)
+![vm2](MultiCloud/5.2az%20-%20vm.png)
+![vm3](MultiCloud/5.3az%20-%20vm.png)
 
 ========================================================================================================
 
 
-## 3.2 AWS
+## 3.2 Configurações na AWS
 
 AWS Serviço: EC2 (Amazon Linux) <br>
 VPC: vpc-aws <br>
@@ -146,9 +147,9 @@ Sub-rede: subnet-aws-private <br>
 IP Privado: 10.0.2.4 <br>
 Região: us-east-1 <br>
 
-## 3.2.1 - Configurações na AWS
 
-## 3.2.2  [Criação da VPC]
+
+### 3.2.1  [Criação da VPC]
 
 Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recursos na AWS.
 
@@ -162,7 +163,7 @@ Neste passo, criaremos a Virtual Private Cloud (VPC) que abrigará nossos recurs
 
 ![VPC AWS](MultiCloud/1aws%20-%20vpc.png)
 
-## 3.2.3  [Criação da Subnet]
+## 3.2.2  [Criação da Subnet]
 
 Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
@@ -176,7 +177,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 ![Subnet AWS](MultiCloud/2aws%20-%20subnet.png)
 
-### 3.2.4 [Criação do Security Group]
+### 3.2.3 [Criação do Security Group]
 
 1.  No console da AWS, navegue até **EC2 > Security Groups**.
 2.  Clique em **"Create security group"**.
@@ -190,7 +191,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 7.  **"Outbound rules"**: Deixe o padrão (All traffic, All IPs) ou restrinja, mas para teste, o padrão é suficiente.
 8.  Clique em **"Create security group"**.
 
-### 3.2.5 [Criação da Instância EC2]
+### 3.2.4 [Criação da Instância EC2]
 
 1.  No console da AWS, navegue até **EC2 > Instances**.
 2.  Clique em **"Launch instances"**.
@@ -209,9 +210,9 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 
 
-## 4. Configuração da VPN Site-to-Site
+================================================================================================
 
-==================================
+## 4. Configuração da VPN Site-to-Site
 
 AWS (VPN Gateway e Customer Gateway) 
 
