@@ -274,8 +274,8 @@ O Gateway de Rede Local representa o Customer Gateway (a AWS VPC) para o Azure.
 
 1.  No portal do Azure, pesquise por "Gateways de rede local" e clique em **"Criar"**.
 2.  Selecione a **"Assinatura"** e o **"Grupo de recursos"** (`gr-multicloud`).
-3.  Para **"Nome"**, digite `lgw-aws`.
-4.  Para **"Região"**, selecione **"West US 2"**
+3.  Para **"Região"**, selecione **"West US 2"**.
+4.  Para **"Nome"**, digite `lgw-aws`.
 5.  Para **"Ponto de extremidade"**, selecione **"Endereço IP"**.
 6.  Para **"Endereço IP"**, insira o endereço IP público de um dos túneis do Gateway VPN da AWS (ex: Túnel 1 com `PSK`).
 7.  Para **"Espaços de endereço"**, adicione o bloco CIDR da VPC da AWS (`172.16.0.0/16`).
