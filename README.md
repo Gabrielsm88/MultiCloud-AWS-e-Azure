@@ -308,7 +308,7 @@ Inserir chave pré-compartilhada (PSK) igual à usada na AWS.
 1.  No console da AWS, navegue até **VPC > Customer Gateways**.
 2.  Clique em **"Create Customer Gateway"**.
 3.  **"Name"**: `ctm-gtw-aws`.
-5.  **"IP Address"**: Insira o endereço IP público do Gateway VPN do Azure (será obtido após a criação do Gateway no Azure).
+5.  **"IP Address"**: Insira o endereço IP público do Gateway VPN do Azure.
 6.  Clique em **"Create Customer Gateway"**.
 
 ![Customer Gateway](MultiCloud/aws%20-%20customer.png)
