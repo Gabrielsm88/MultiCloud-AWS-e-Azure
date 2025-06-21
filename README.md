@@ -340,7 +340,7 @@ Inserir chave pré-compartilhada (PSK) igual à usada na AWS.
 7.  **"Customer Gateway ID"**: Selecione o `ctm-gtw-aws` criado anteriormente.
 8.  **"Routing Options"**: `Static`.
 
-![VPN Site-to-Site](MultiCloud/aws%20-%20sts0)
+![VPN Site-to-Site](MultiCloud/aws%20-%20sts0.png)
 
 9.  **"Static IP Prefixes"**: Adicione o bloco CIDR da VNet do Azure (`10.0.0.0/16`).
 10. **"Local IPv4 Network CIDR"**: `172.16.0.0/16` (CIDR da sua VPC AWS).
@@ -348,7 +348,7 @@ Inserir chave pré-compartilhada (PSK) igual à usada na AWS.
 12. **"Tunnel Options"**: Pode deixar como padrão ou personalizar (ex: chaves pré-compartilhadas: `Key_VPN_2025.`).
 13. Clique em **"Create VPN Connection"**.
 
-![VPN Site-to-Site](MultiCloud/aws%20-%20sts1)
+![VPN Site-to-Site](MultiCloud/aws%20-%20sts1.png)
 
 Após a criação, você poderá "Download Configuration" para obter os detalhes do túnel, incluindo os IPs públicos dos endpoints da AWS VPN. Guarde esses IPs, pois você precisará deles para a configuração no Azure.
 
