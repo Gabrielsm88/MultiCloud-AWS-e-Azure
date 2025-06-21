@@ -239,7 +239,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 ## 4. Configuração da VPN Site-to-Site
 
-* **Azure (Gateway de VPN)**
+- *Azure*
 
 ### 4.1  [Criação do Gateway de Rede Virtual (VPN Gateway)]
 
@@ -290,19 +290,22 @@ Finalmente, crie a conexão entre o Gateway de Rede Virtual do Azure e o Gateway
 1.  Navegue até seu **Gateway de Rede Virtual** (`vpn-gtw-azure`).
 2.  No menu esquerdo, em **"Configurações"**, clique em **"Conexões"**.
 3.  Clique em **"+ Adicionar"**.
-4.  Para **"Nome"**, digite `conn-azure-aws`.
-5.  Para **"Tipo de conexão"**, selecione `Site-to-site (IPsec)`.
+4.  Para **"Tipo de conexão"**, selecione `Site-to-site (IPsec)`.
+5.  Para **"Nome"**, digite `conn-azure-aws`.
+
+![conexão](MultiCloud/azure%20-%20conn0.png)
+
 6.  Para **"Gateway de rede virtual"**, selecione `vpn-gtw-azure`.
 7.  Para **"Gateway de rede local"**, selecione `lgw-aws`.
 8.  Para **"Chave pré-compartilhada (PSK)"**, insira a mesma chave pré-compartilhada que você definiu ou obteve da configuração da VPN na AWS.
 9.  Deixe **"BGP"** como `Desabilitado`.
 10. Clique em **"OK"**.
 
-Inserir chave pré-compartilhada (PSK) igual à usada na AWS.
+![conexão](MultiCloud/azure%20-%20conn1.png)
 
+##
 
-
-* **AWS (VPN Gateway e Customer Gateway)** 
+- *AWS*
 
 ### 4.4  [Criação do Customer Gateway]
 
