@@ -393,12 +393,18 @@ Para uma VPN Baseada em Rota, o tráfego para os espaços de endereço configura
 3.  Selecione a sub-rede onde sua Máquina Virtual está localizada (`subnet-azure-private`).
 4.  Role para baixo e verifique a seção **"Tabela de rotas"**.
     * Se você não tiver uma UDR personalizada associada, as rotas serão propagadas pelo Gateway de Rede Virtual automaticamente.
-    * **Para confirmar:** Embora não seja estritamente um "passo de configuração de rota" manual para VPNs Baseadas em Rota, você pode verificar as "Rotas eficazes" de uma interface de rede da sua VM (NIC) para ver se a rota para a rede da AWS (`172.16.0.0/16`) está presente e apontando para o Gateway de Rede Virtual.
-        * Navegue até sua **Máquina Virtual (`vm-azure-test`)**.
-        * No menu esquerdo, em **"Configurações"**, clique em **"Rede"**.
-        * Clique na **Interface de rede** associada à VM.
-        * No menu esquerdo da Interface de Rede, em **"Suporte + solução de problemas"**, clique em **"Rotas efetivas"**.
-        * Verifique se existe uma rota para o prefixo `172.16.0.0/16` com o "Próximo salto" sendo `VNetGateway`. Isso confirmará que o roteamento está configurado corretamente.
+
+![Azure Rotas](MultiCloud/azure%20-%20conf0.png)
+   
+* **Para confirmar:** Embora não seja estritamente um "passo de configuração de rota" manual para VPNs Baseadas em Rota, você pode verificar as "Rotas eficazes" de uma interface de rede da sua VM (NIC) para ver se a rota para a rede da AWS (`172.16.0.0/16`) está presente e apontando para o Gateway de Rede Virtual. <br>
+
+  * Navegue até sua **Máquina Virtual (`vm-azure-test`)**.
+  * No menu esquerdo, em **"Configurações"**, clique em **"Rede"**.
+  * Clique na **Interface de rede** associada à VM.
+  * No menu esquerdo da Interface de Rede, em **"Ajuda"**, clique em **"Obter rotas"**.
+  * Verifique se existe uma rota para o prefixo `172.16.0.0/16` com o "Próximo salto" sendo `VNetGateway`. Isso confirmará que o roteamento está configurado corretamente.
+
+![Azure Rotas](MultiCloud/azure%20-%20conf1.png)
 
 ##
 
