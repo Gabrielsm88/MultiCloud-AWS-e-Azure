@@ -433,7 +433,7 @@ Para que o tráfego da VPC saiba como chegar à VNet do Azure através do túnel
 
 Agora, qualquer tráfego originado em sua VPC destinado ao bloco `10.0.0.0/16` será direcionado para o `vpg-aws`, que o encaminhará pelo túnel VPN.
 
-<br>
+##
 
 ### Tabelas de Roteamento
 
@@ -461,7 +461,7 @@ Após a conclusão das configurações em ambas as nuvens:
 
 2.  **Teste a conectividade:**
 
-   * Do EC2, tente dar `ping` para o IP privado da VM do Azure.
+### Do EC2, tente dar `ping` para o IP privado da VM do Azure.
 
 #### SSH da EC2 → VM da Azure:
 
@@ -471,7 +471,7 @@ Após a conclusão das configurações em ambas as nuvens:
 
 	* ping 10.0.1.4 
 
- <br>   * Da VM do Azure, tente dar `ping` para o IP privado da instância EC2.
+### Da VM do Azure, tente dar `ping` para o IP privado da instância EC2.
 
 #### SSH da VM da Azure → EC2:
 
