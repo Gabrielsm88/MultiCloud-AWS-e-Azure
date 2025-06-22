@@ -191,7 +191,26 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 ![subnet](MultiCloud/aws%20-%20subnet.png)
 
-### 3.2.3  [Criação do Security Group]
+### 3.2.3  [Criação do Internet Gateway (IGW)]
+
+O Internet Gateway é um componente da VPC que permite a comunicação entre a sua VPC e a internet. Embora a VPN seja uma conexão privada, o Virtual Private Gateway (VPG) precisa de acesso à internet para estabelecer o túnel IPsec com o Gateway VPN do Azure.
+
+1.  No console da AWS, navegue até **VPC > Internet Gateways**.
+2.  Clique em **"Create internet gateway"**.
+3.  Para **"Name tag"**, digite `igw-aws`.
+4.  Clique em **"Create internet gateway"**.
+
+![Internet Gateway](MultiCloud/aws%20-%20int%20gtw0.png)
+
+5.  Após a criação, selecione o `igw-aws` recém-criado.
+6.  Clique em **"Actions" > "Attach to VPC"**.
+7.  Selecione sua VPC (`vpc-aws`).
+8.  Clique em **"Attach internet gateway"**.
+
+![Internet Gateway](MultiCloud/aws%20-%20int%20gtw1.png)
+![Internet Gateway](MultiCloud/aws%20-%20int%20gtw2.png)
+
+### 3.2.4  [Criação do Security Group]
 
 1.  No console da AWS, navegue até **EC2 > Security Groups**.
 2.  Clique em **"Create security group"**.
@@ -211,7 +230,7 @@ Agora, criaremos uma sub-rede dentro da VPC recém-criada.
 
 ![sg](MultiCloud/aws%20-%20sg.png)
 
-### 3.2.4  [Criação da Instância EC2]
+### 3.2.5  [Criação da Instância EC2]
 
 1.  No console da AWS, navegue até **EC2 > Instances**.
 2.  Clique em **"Launch instances"**.
@@ -361,24 +380,69 @@ Após a criação, você poderá "Download Configuration" para obter os detalhes
 
 ## 5. Configuração de Rede
 
-- Configurar a rota 172.16.1.0/24 (AWS) no Azure.
-- Configurar a rota 10.0.1.0/24 (Azure) na tabela de rotas da AWS.
+- Configurar a rota 172.16.0.0/16 (AWS) no Azure.
+
+### 5.1  [Configuração de Rotas no Azure]
+
+No Azure, o roteamento para conexões Site-to-Site com Gateways Baseados em Rota é geralmente tratado automaticamente. No entanto, é importante verificar se a opção de "Propagar rotas de gateway" está habilitada para as tabelas de rotas das sub-redes relevantes, ou se é necessário criar rotas definidas pelo usuário (UDRs) para casos específicos.
+
+Para uma VPN Baseada em Rota, o tráfego para os espaços de endereço configurados no Gateway de Rede Local é automaticamente roteado para o VPN Gateway.
+
+1.  No portal do Azure, navegue até sua **Virtual Network (VNet)** (`vnet-azure`).
+2.  No menu esquerdo, em **"Configurações"**, clique em **"Sub-redes"**.
+3.  Selecione a sub-rede onde sua Máquina Virtual está localizada (`subnet-azure-private`).
+4.  Role para baixo e verifique a seção **"Tabela de rotas"**.
+    * Se você não tiver uma UDR personalizada associada, as rotas serão propagadas pelo Gateway de Rede Virtual automaticamente.
+    * **Para confirmar:** Embora não seja estritamente um "passo de configuração de rota" manual para VPNs Baseadas em Rota, você pode verificar as "Rotas eficazes" de uma interface de rede da sua VM (NIC) para ver se a rota para a rede da AWS (`172.16.0.0/16`) está presente e apontando para o Gateway de Rede Virtual.
+        * Navegue até sua **Máquina Virtual (`vm-azure-test`)**.
+        * No menu esquerdo, em **"Configurações"**, clique em **"Rede"**.
+        * Clique na **Interface de rede** associada à VM.
+        * No menu esquerdo da Interface de Rede, em **"Suporte + solução de problemas"**, clique em **"Rotas efetivas"**.
+        * Verifique se existe uma rota para o prefixo `172.16.0.0/16` com o "Próximo salto" sendo `VNetGateway`. Isso confirmará que o roteamento está configurado corretamente.
+
+##
+
+- Configurar a rota 10.0.0.0/16 (Azure) na tabela de rotas da AWS.
+
+### 5.2  [Configuração de Rotas na AWS]
+
+Para que o tráfego da VPC saiba como chegar à VNet do Azure através do túnel VPN, precisamos configurar a tabela de rotas da VPC.
+
+1.  No console da AWS, navegue até **VPC > Route Tables**.
+2.  Localize e selecione a **tabela de rotas** associada à sua VPC (`vpc-aws`) e, especificamente, à sub-rede onde sua instância EC2 (`subnet-aws-private`) está localizada. Geralmente, esta é a tabela de rotas principal ou uma tabela personalizada associada à sub-rede.
+3.  Com a tabela de rotas selecionada, clique na aba **"Routes"**.
+
+![AWS Rotas](MultiCloud/aws%20-%20route0.png)
+
+4.  Clique em **"Edit routes"**.
+5.  Clique em **"Add route"** para adicionar a rota para o Azure:
+    * Em **"Destination"**, insira o bloco CIDR da VNet do Azure: `10.0.0.0/16`.
+    * Em **"Target"**, selecione **"Virtual Private Gateway"** e então escolha o VPG que você criou (`vpg-aws`).
+6.  Clique em **"Add route"** novamente para adicionar a rota para o Internet Gateway:
+    * Em **"Destination"**, insira o bloco CIDR para todo o tráfego da internet: `0.0.0.0/0`.
+    * Em **"Target"**, selecione **"Internet Gateway"** e então escolha o IGW que você criou (`igw-aws`).
+7.  Clique em **"Save changes"**.
+
+![AWS Rotas](MultiCloud/aws%20-%20route1.png)
+
+Agora, qualquer tráfego originado em sua VPC destinado ao bloco `10.0.0.0/16` será direcionado para o `vpg-aws`, que o encaminhará pelo túnel VPN.
+
+<br>
 
 ### Tabelas de Roteamento
 
 #### Azure - Tabela de Rota 
-| Nome | Prefixo | Próximo salto |
-|-------|----------|----------------|
-| rotaAWS | 172.16.1.0/24 | Gateway de VPN (Azure) |
+| Destination | Target |
+|----------|----------------|
+| 172.16.0.0/16 | Gateway de VPN (Azure) |
 
 #### AWS - Tabela de Rota 
-| Nome | Prefixo | Próximo salto |
-|------|--------|--------------|
-| rotaAzure | 10.0.1.0/24 | Virtual Private Gateway |
+| Destination | Target |
+|--------|--------------|
+| 10.0.0.0/16 | Virtual Private Gateway |
 
 
 [comment]: # (Marcar “Propagar rotas do gateway” na AWS para o VPN Gateway.)
-
 
 
 ## 6. Testes de Conectividade
