@@ -450,3 +450,5 @@ Microsoft Learn - [Conectar Azure a outra nuvem via VPN](https://learn.microsoft
 AWS Documentation - [Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html)
 
 RFC 4301 - [IPsec Architecture](https://datatracker.ietf.org/doc/html/rfc4301)
+
+Conexão - [Conectar ambientes AWS e Azure](https://www.megaport.com/pt/blog/como-conectar-seus-ambientes-aws-e-microsoft-azure/)
