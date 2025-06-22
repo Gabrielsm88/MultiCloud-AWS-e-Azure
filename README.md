@@ -437,15 +437,10 @@ Agora, qualquer tráfego originado em sua VPC destinado ao bloco `10.0.0.0/16` s
 
 ### Tabelas de Roteamento
 
-#### Azure - Tabela de Rota 
-| Destination | Target |
-|----------|----------------|
-| 172.16.0.0/16 | Gateway de VPN (Azure) |
-
-#### AWS - Tabela de Rota 
-| Destination | Target |
-|--------|--------------|
-| 10.0.0.0/16 | Virtual Private Gateway |
+| Plataforma | Destination | Target |
+|--------|----------|----------------|
+| Azure | 172.16.0.0/16 | Gateway de VPN |
+| AWS | 10.0.0.0/16 | Virtual Private Gateway |
 
 
 [comment]: # (Marcar “Propagar rotas do gateway” na AWS para o VPN Gateway.)
@@ -491,7 +486,7 @@ Se a VPN estiver ativa e os firewalls corretamente configurados, a comunicação
 
 ## 7. Tabela de Configurações
 
- | Recurso | IP Privado | Sub-rede | CIDR | Região | 
+ | Recurso | IPs | Sub-rede | CIDR | Região | 
 |---------------|----------------|---------------|---------|------------|
 |VM Azure|10.0.1.4|subnet-azure-private|10.0.1.0/24|West US 2|
 |EC2 AWS|172.16.1.4|subnet-aws-private|172.16.1.0/24|us-east-1|
