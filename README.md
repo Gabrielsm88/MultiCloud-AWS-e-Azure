@@ -28,7 +28,7 @@ Cada nuvem configura um Gateway VPN que se conecta ao outro, permitindo que as s
 
 
 (Figura ilustrativa com Azure, AWS, VPN Gateway, e VMs em sub-redes privadas)
-![Arquitetura MultiCloud](MultiCloud/)
+![Arquitetura MultiCloud](MultiCloud/arquitetura.drawio.png)
 
 
 ## 3. Provisionamento das Máquinas Virtuais
