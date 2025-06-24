@@ -458,6 +458,9 @@ Após a conclusão das configurações em ambas as nuvens:
 
 ### Do EC2, tente dar `ping` para o IP privado da VM do Azure.
 
+![ping](Multicloud/aws%20-%20ping.png)
+![ping](Multicloud/aws%20-%20ssh.png)
+
 #### SSH da EC2 → VM da Azure:
 
 	ssh ubuntu@10.0.1.4
@@ -467,6 +470,9 @@ Após a conclusão das configurações em ambas as nuvens:
 	* ping 10.0.1.4 
 
 ### Da VM do Azure, tente dar `ping` para o IP privado da instância EC2.
+
+![ping](Multicloud/azure%20-%20ping.png)
+![ping](Multicloud/azure%20-%20ssh.png)
 
 #### SSH da VM da Azure → EC2:
 
